@@ -88,6 +88,9 @@ def make_api_request(endpoint, method="POST", data=None):
             return {}
 
         from openai import OpenAI
+import os
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
