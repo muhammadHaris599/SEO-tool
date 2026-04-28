@@ -68,38 +68,47 @@ def initialize_session_state():
         st.session_state.current_step = "input"
 
 
-def make_api_request(endpoint: str, method: str = "POST", data: dict = None) -> Dict:
-    """
-    Make a request to the FastAPI backend.
-    
-    Args:
-        endpoint: API endpoint path
-        method: HTTP method (POST, GET)
-        data: Request payload
-    
-    Returns:
-        Response data as dictionary
-    """
+import openai
+import os
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def make_api_request(endpoint, method="POST", data=None):
     try:
-        url = f"{API_BASE_URL}/{endpoint}"
+        if endpoint == "generate-topics":
+            prompt = f"Generate 10 SEO blog topics for niche: {data['niche']} with keyword: {data['primary_keyword']}"
         
-        if method == "POST":
-            response = requests.post(url, json=data, timeout=120)
+        elif endpoint == "generate-outline":
+            prompt = f"Create a detailed blog outline for topic: {data['topic']}"
+        
+        elif endpoint == "generate-content":
+            prompt = f"Write a full SEO optimized article on: {data['topic']}"
+        
         else:
-            response = requests.get(url, timeout=10)
-        
-        response.raise_for_status()
-        return response.json()
-    
-    except requests.exceptions.Timeout:
-        raise Exception("Request timed out. Please try again.")
-    except requests.exceptions.ConnectionError:
-        raise Exception(f"Cannot connect to API at {API_BASE_URL}. Make sure the backend is running.")
-    except requests.exceptions.HTTPError as e:
-        error_detail = e.response.json() if e.response.text else str(e)
-        raise Exception(f"API Error: {error_detail}")
+            return {}
+
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+        )
+
+        text = response.choices[0].message["content"]
+
+        return {
+            "topics": [text] if endpoint == "generate-topics" else [],
+            "outline": [{"heading": text, "level": 1}],
+            "content": {
+                "html": text,
+                "meta_title": "Generated Title",
+                "meta_description": "Generated Description",
+                "word_count": len(text.split())
+            },
+            "status": "success"
+        }
+
     except Exception as e:
-        raise Exception(f"Request failed: {str(e)}")
+        raise Exception(str(e))
 
 
 def render_header():
