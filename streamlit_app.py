@@ -68,10 +68,10 @@ def initialize_session_state():
         st.session_state.current_step = "input"
 
 
-from openai import OpenAI
+import openai
 import os
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def make_api_request(endpoint, method="POST", data=None):
     try:
