@@ -98,7 +98,6 @@ response = client.chat.completions.create(
 )
 
 text = response.choices[0].message.content
-
         return {
             "topics": [text] if endpoint == "generate-topics" else [],
             "outline": [{"heading": text, "level": 1}],
