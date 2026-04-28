@@ -68,10 +68,10 @@ def initialize_session_state():
         st.session_state.current_step = "input"
 
 
-import openai
+from openai import OpenAI
 import os
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def make_api_request(endpoint, method="POST", data=None):
     try:
@@ -87,10 +87,7 @@ def make_api_request(endpoint, method="POST", data=None):
         else:
             return {}
 
-        from openai import OpenAI
-import os
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 response = client.chat.completions.create(
     model="gpt-4o-mini",
