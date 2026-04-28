@@ -87,13 +87,16 @@ def make_api_request(endpoint, method="POST", data=None):
         else:
             return {}
 
-        response = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-        )
+        from openai import OpenAI
 
-        text = response.choices[0].message["content"]
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": prompt}],
+)
+
+text = response.choices[0].message.content
 
         return {
             "topics": [text] if endpoint == "generate-topics" else [],
