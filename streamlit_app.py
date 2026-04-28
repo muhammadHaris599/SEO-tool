@@ -87,14 +87,13 @@ def make_api_request(endpoint, method="POST", data=None):
         else:
             return {}
 
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+        )
 
+        text = response.choices[0].message.content
 
-response = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[{"role": "user", "content": prompt}],
-)
-
-text = response.choices[0].message.content
         return {
             "topics": [text] if endpoint == "generate-topics" else [],
             "outline": [{"heading": text, "level": 1}],
