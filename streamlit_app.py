@@ -87,12 +87,12 @@ def make_api_request(endpoint, method="POST", data=None):
         else:
             return {}
 
-        response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-        )
+        response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[{"role": "user", "content": prompt}],
+)
 
-        text = response.choices[0].message.content
+text = response.choices[0].message["content"]
 
         return {
             "topics": [text] if endpoint == "generate-topics" else [],
