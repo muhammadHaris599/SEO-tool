@@ -77,22 +77,22 @@ def make_api_request(endpoint, method="POST", data=None):
     try:
         if endpoint == "generate-topics":
             prompt = f"Generate 10 SEO blog topics for niche: {data['niche']} with keyword: {data['primary_keyword']}"
-        
+
         elif endpoint == "generate-outline":
             prompt = f"Create a detailed blog outline for topic: {data['topic']}"
-        
+
         elif endpoint == "generate-content":
             prompt = f"Write a full SEO optimized article on: {data['topic']}"
-        
+
         else:
             return {}
 
         response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=[{"role": "user", "content": prompt}],
-)
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+        )
 
-text = response.choices[0].message["content"]
+        text = response.choices[0].message["content"]
 
         return {
             "topics": [text] if endpoint == "generate-topics" else [],
@@ -107,7 +107,7 @@ text = response.choices[0].message["content"]
         }
 
     except Exception as e:
-        raise Exception(str(e))
+        return {"error": str(e)}
 
 
 def render_header():
